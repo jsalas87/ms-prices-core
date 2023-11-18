@@ -1,0 +1,88 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.14'
+    id 'io.spring.dependency-management' version '1.1.2'
+    id 'java'
+    id 'jacoco'
+    //Dependency Check
+    id "org.owasp.dependencycheck" version "8.2.1"
+}
+
+group = 'com.rfsc'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springCloudVersion', "2021.0.8")
+}
+
+dependencies {
+
+    // Spring
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.7.5'
+    runtimeOnly 'com.h2database:h2:2.2.220'
+
+
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.20.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+    
+    // Lombok
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.projectlombok:lombok'
+
+
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.6.15'
+
+    // ArchUnit
+    testImplementation 'com.tngtech.archunit:archunit:1.0.0'
+    testImplementation 'com.tngtech.archunit:archunit-junit5:1.0.0'
+    testImplementation group: 'com.h2database', name: 'h2', version: '2.2.220'
+
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+bootRun {
+    jvmArgs = ["-Djava.security.egd=file:/dev/./urandom", "-Dspring.profiles.active=local", "-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true"]
+}
+
+// Sonar settings
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+jar.enabled = false
